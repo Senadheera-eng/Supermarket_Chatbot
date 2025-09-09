@@ -683,7 +683,7 @@ class SupermarketChatbotGUI:
             title="Save Shopping List",
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialname=default_filename
+            initialfile=default_filename
         )
 
         if filename:
