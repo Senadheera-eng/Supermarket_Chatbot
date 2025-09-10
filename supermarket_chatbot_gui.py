@@ -803,14 +803,6 @@ def main():
     # Create root window
     root = tk.Tk()
 
-    # Set window icon (if available)
-    try:
-        # You can add an icon file here if you have one
-        # root.iconbitmap('icon.ico')
-        pass
-    except:
-        pass
-
     # Create and run the application
     app = SupermarketChatbotGUI(root)
 
