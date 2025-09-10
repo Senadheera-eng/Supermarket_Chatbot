@@ -441,27 +441,37 @@ class SupermarketChatbotGUI:
 
     def on_input_focus_in(self, event):
         """Handle input focus in"""
-        if self.input_text.get('1.0', 'end-1c') == self.input_placeholder:
+        current_text = self.input_text.get('1.0', 'end-1c')
+        if current_text == self.input_placeholder:
             self.input_text.delete('1.0', 'end')
             self.input_text.configure(fg=self.colors['text'])
 
     def on_input_focus_out(self, event):
         """Handle input focus out"""
-        if not self.input_text.get('1.0', 'end-1c').strip():
+        current_text = self.input_text.get('1.0', 'end-1c').strip()
+        if not current_text:
+            self.input_text.delete('1.0', 'end')  # Clear any whitespace
             self.input_text.insert('1.0', self.input_placeholder)
             self.input_text.configure(fg=self.colors['text_light'])
 
     def set_example(self, example):
         """Set example text in input"""
-        self.clear_input()
+        # Clear the text widget completely
+        self.input_text.delete('1.0', 'end')
+        # Insert only the example text
         self.input_text.insert('1.0', example)
+        # Set the text color to normal (not placeholder color)
         self.input_text.configure(fg=self.colors['text'])
+        # Give focus to the text widget
+        self.input_text.focus_set()
 
     def clear_input(self):
         """Clear input text"""
         self.input_text.delete('1.0', 'end')
         self.input_text.insert('1.0', self.input_placeholder)
         self.input_text.configure(fg=self.colors['text_light'])
+        # Remove focus from the text widget to ensure placeholder behavior works correctly
+        self.process_btn.focus_set()
 
     def update_status(self, message, color='text_light'):
         """Update status bar message"""
@@ -483,11 +493,25 @@ class SupermarketChatbotGUI:
             pos_tags = pos_tag(tokens)
 
             items = []
-            for word, pos in pos_tags:
-                if (pos in ['NN', 'NNS', 'NNP', 'NNPS'] and
-                        word.lower() not in self.stop_words and
-                        len(word) > 2):
-                    items.append(word.lower())
+            i = 0
+            while i < len(pos_tags):
+                word, pos = pos_tags[i]
+                
+                # Look for nouns that could be products
+                if pos in ['NN', 'NNS', 'NNP', 'NNPS'] and len(word) > 2:
+                    # Check for compound nouns (like "ice cream")
+                    compound_noun = word
+                    j = i + 1
+                    while (j < len(pos_tags) and 
+                        pos_tags[j][1] in ['NN', 'NNS', 'NNP', 'NNPS'] and 
+                        j - i < 3):  # Limit compound to 3 words max
+                        compound_noun += " " + pos_tags[j][0]
+                        j += 1
+                    
+                    items.append(compound_noun.lower())
+                    i = j - 1
+                i += 1
+                
             return items
         except:
             # Fallback to simple splitting
@@ -514,18 +538,52 @@ class SupermarketChatbotGUI:
     def extract_items(self, text):
         """Main item extraction function"""
         clean_text = self.preprocess_text(text)
+        
+        # Words to filter out (common phrases that aren't products)
+        filter_words = {
+            'want', 'buy', 'need', 'get', 'purchase', 'looking', 'for', 'some', 
+            'would', 'like', 'to', 'i', 'we', 'me', 'us', 'can', 'could', 
+            'should', 'will', 'shall', 'do', 'does', 'did', 'have', 'has', 
+            'had', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+            'the', 'a', 'an', 'and', 'or', 'but', 'so', 'if', 'then',
+            'this', 'that', 'these', 'those', 'my', 'your', 'our', 'their'
+        }
 
         if self.use_spacy:
             items = self.extract_items_spacy(clean_text)
         else:
             items = self.extract_items_nltk(clean_text)
 
-        # Also try simple splitting
+        # Also try simple splitting on commas and "and"
         simple_split = [item.strip() for item in re.split(r'[,\s]+and\s+|\s*,\s*', clean_text) if item.strip()]
 
-        # Combine and filter
-        all_items = list(set(items + simple_split))
-        filtered_items = [item for item in all_items if item not in ['want', 'buy', 'need', 'get', 'purchase']]
+        # Combine items from both methods
+        all_items = items + simple_split
+        
+        # Enhanced filtering
+        filtered_items = []
+        for item in all_items:
+            # Clean the item by removing common prefixes
+            item_cleaned = re.sub(r'^(i\s+want\s+|i\s+need\s+|we\s+want\s+|we\s+need\s+)', '', item.lower()).strip()
+            
+            # Skip if it's just a filter word
+            words_in_item = item_cleaned.split()
+            if len(words_in_item) == 1 and item_cleaned in filter_words:
+                continue
+                
+            # Skip if more than half the words are filter words
+            filter_word_count = sum(1 for word in words_in_item if word in filter_words)
+            if len(words_in_item) > 1 and filter_word_count >= len(words_in_item) / 2:
+                continue
+                
+            # Skip very short items or items that are just numbers
+            if len(item_cleaned) < 3 or item_cleaned.isdigit():
+                continue
+            
+            # Add the cleaned item if it's not empty and not already added
+            if (item_cleaned and 
+                item_cleaned not in [i.lower() for i in filtered_items]):
+                filtered_items.append(item_cleaned)
 
         return filtered_items
 
