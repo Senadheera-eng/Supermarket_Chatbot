@@ -1,11 +1,9 @@
 # Supermarket Assistant Chatbot
 
 ## Overview
-
 An intelligent chatbot application that helps supermarket customers find shelf locations for their shopping items using Natural Language Processing (NLP) techniques. Available in both CLI and GUI versions!
 
 ## Features
-
 - **NLP-powered item extraction**: Uses NLTK and spaCy for tokenization, POS tagging, and named entity recognition
 - **Smart product matching**: Handles various item names and finds partial matches
 - **Organized shopping lists**: Groups items by shelf number for efficient shopping
@@ -16,7 +14,6 @@ An intelligent chatbot application that helps supermarket customers find shelf l
 ## Interface Options
 
 ### 🖼️ GUI Version (Recommended)
-
 - Modern, user-friendly graphical interface
 - Real-time NLP processing with visual feedback
 - Organized layout with input panel and results panel
@@ -25,13 +22,11 @@ An intelligent chatbot application that helps supermarket customers find shelf l
 - Professional design with modern styling
 
 ### 💻 CLI Version
-
 - Simple command-line interface
 - Interactive text-based conversation
 - Ideal for terminal users and automation
 
 ## Requirements
-
 - Python 3.7 or higher
 - NLTK library
 - spaCy library (optional, for enhanced NLP)
@@ -40,11 +35,9 @@ An intelligent chatbot application that helps supermarket customers find shelf l
 ## Installation
 
 ### Step 1: Clone or Download
-
 Download all the project files to a folder on your computer.
 
 ### Step 2: Install Dependencies
-
 ```bash
 # Install required packages
 pip install -r requirements.txt
@@ -56,15 +49,12 @@ python -m spacy download en_core_web_sm
 ### Step 3: Run the Application
 
 #### Easy Way (Launcher):
-
 ```bash
 python launcher.py
 ```
-
 The launcher will let you choose between CLI and GUI versions and handle dependency installation.
 
 #### Direct Launch:
-
 ```bash
 # For GUI version:
 python supermarket_chatbot_gui.py
@@ -85,7 +75,6 @@ python supermarket_chatbot.py
 
 **Input:** "I want to buy apples, milk, and detergent"
 **Output:**
-
 ```
 ✅ ITEMS FOUND:
    Apples → Shelf 1
@@ -104,7 +93,6 @@ SHELF 5:
 
 **Input:** "I need bread, eggs, chicken, and orange juice"
 **Output:**
-
 ```
 ✅ ITEMS FOUND:
    Bread → Shelf 6
@@ -115,7 +103,6 @@ SHELF 5:
 ```
 
 ## Supported Products
-
 The chatbot recognizes over 50 different products across 10 shelf categories:
 
 - **Shelf 1**: Fruits & Vegetables (apples, bananas, tomatoes, etc.)
@@ -139,17 +126,17 @@ The chatbot recognizes over 50 different products across 10 shelf categories:
 6. **Pattern Matching**: Finding partial matches for product variations
 
 ## File Structure
-
 ```
 supermarket-chatbot/
 │
 ├── launcher.py                    # Easy launcher (choose CLI/GUI)
 ├── supermarket_chatbot.py         # CLI version
-├── supermarket_chatbot_gui.py     # GUI version
+├── supermarket_chatbot_gui.py     # GUI version  
 ├── requirements.txt               # Python dependencies
-├── README.md                      # This file
-├── user_guide.pdf                 # User documentation
-└── shopping_list_*.txt            # Generated shopping lists
+├── README.md                     # This file
+├── user_guide.md                 # User documentation
+├── test_chatbot.py               # Testing script
+└── shopping_list_*.txt           # Generated shopping lists
 ```
 
 ## Troubleshooting
@@ -157,12 +144,10 @@ supermarket-chatbot/
 ### Common Issues:
 
 1. **NLTK Data Not Found**
-
    - The application will automatically download required NLTK data
    - If issues persist, run: `python -c "import nltk; nltk.download('all')"`
 
 2. **spaCy Model Not Found**
-
    - Install with: `python -m spacy download en_core_web_sm`
    - The application works without spaCy, using NLTK only
 
@@ -171,11 +156,9 @@ supermarket-chatbot/
    - Use Python 3.7 or higher
 
 ## Development Notes
-
 - The product database can be easily extended by adding items to the `product_database` dictionary
 - The NLP pipeline can be customized by modifying the extraction methods
 - Additional shelf categories can be added as needed
 
 ## License
-
 This project is created for educational purposes as part of the CO3251 Natural Language Processing course assignment.
