@@ -39,115 +39,100 @@ except ImportError:
 class SupermarketChatbotGUI:
     def __init__(self, root):
         self.root = root
+        
+        # Initialize transaction logging first
+        self.transactions = []
+        self.session_id = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
         self.setup_window()
         self.setup_chatbot_engine()
         self.setup_ui()
         self.setup_bindings()
+        
+        # Welcome message
+        self.add_message("assistant", "Hello! I'm your Supermarket Assistant 🛒\nI can help you find shelf locations for your shopping items. Just tell me what you'd like to buy!")
 
     def setup_window(self):
         """Configure the main window"""
-        self.root.title("🛒 Supermarket Assistant Chatbot")
-        self.root.geometry("1200x800")
-        self.root.minsize(800, 600)
-
-        # Modern color scheme
+        self.root.title("Supermarket Assistant")
+        self.root.geometry("450x700")
+        self.root.minsize(400, 600)
+        
+        # Modern color scheme matching the design
         self.colors = {
-            'primary': '#2563eb',  # Blue
-            'secondary': '#10b981',  # Green
-            'accent': '#f59e0b',  # Orange
-            'background': '#f8fafc',  # Light gray
-            'surface': '#ffffff',  # White
-            'text': '#1f2937',  # Dark gray
-            'text_light': '#6b7280',  # Medium gray
-            'success': '#10b981',  # Green
-            'error': '#ef4444',  # Red
-            'warning': '#f59e0b'  # Orange
+            'primary': '#4285F4',          # Google Blue
+            'primary_dark': '#1976D2',     # Darker Blue
+            'background': '#F8F9FA',       # Light Gray Background
+            'surface': '#FFFFFF',          # White
+            'user_bubble': '#4285F4',      # Blue for user messages
+            'assistant_bubble': '#F1F3F4', # Light gray for assistant
+            'text_dark': '#202124',        # Dark text
+            'text_light': '#5F6368',       # Light text
+            'border': '#DADCE0',           # Border color
+            'success': '#34A853',          # Green
+            'accent': '#EA4335'            # Red for location pins
         }
-
-        # Configure styles
-        self.setup_styles()
-
-        # Set window background
+        
         self.root.configure(bg=self.colors['background'])
-
-    def setup_styles(self):
-        """Setup ttk styles for modern appearance"""
-        style = ttk.Style()
-
-        # Configure button styles
-        style.configure('Primary.TButton',
-                        font=('Segoe UI', 10, 'bold'),
-                        padding=(15, 8))
-
-        style.configure('Secondary.TButton',
-                        font=('Segoe UI', 9),
-                        padding=(10, 6))
-
-        # Configure frame styles
-        style.configure('Card.TFrame',
-                        background=self.colors['surface'],
-                        relief='flat',
-                        borderwidth=1)
-
-        style.configure('Header.TLabel',
-                        font=('Segoe UI', 16, 'bold'),
-                        background=self.colors['surface'],
-                        foreground=self.colors['primary'])
-
-        style.configure('Subheader.TLabel',
-                        font=('Segoe UI', 11, 'bold'),
-                        background=self.colors['surface'],
-                        foreground=self.colors['text'])
-
-        style.configure('Body.TLabel',
-                        font=('Segoe UI', 9),
-                        background=self.colors['surface'],
-                        foreground=self.colors['text_light'])
 
     def setup_chatbot_engine(self):
         """Initialize the chatbot engine"""
-        # Product database with shelf locations
+        # Product database with shelf locations and categories
         self.product_database = {
             # Fruits & Vegetables - Shelf 1
-            'apple': 1, 'apples': 1, 'banana': 1, 'bananas': 1, 'orange': 1, 'oranges': 1,
-            'tomato': 1, 'tomatoes': 1, 'onion': 1, 'onions': 1, 'carrot': 1, 'carrots': 1,
-            'potato': 1, 'potatoes': 1, 'lettuce': 1, 'spinach': 1,
+            'apple': (1, 'Fruits & Vegetables'), 'apples': (1, 'Fruits & Vegetables'),
+            'banana': (1, 'Fruits & Vegetables'), 'bananas': (1, 'Fruits & Vegetables'),
+            'orange': (1, 'Fruits & Vegetables'), 'oranges': (1, 'Fruits & Vegetables'),
+            'tomato': (1, 'Fruits & Vegetables'), 'tomatoes': (1, 'Fruits & Vegetables'),
+            'onion': (1, 'Fruits & Vegetables'), 'onions': (1, 'Fruits & Vegetables'),
+            'carrot': (1, 'Fruits & Vegetables'), 'carrots': (1, 'Fruits & Vegetables'),
+            'potato': (1, 'Fruits & Vegetables'), 'potatoes': (1, 'Fruits & Vegetables'),
+            'lettuce': (1, 'Fruits & Vegetables'), 'spinach': (1, 'Fruits & Vegetables'),
 
             # Dairy Products - Shelf 2
-            'milk': 2, 'cheese': 2, 'butter': 2, 'yogurt': 2, 'yoghurt': 2, 'cream': 2,
-            'eggs': 2, 'egg': 2,
+            'milk': (2, 'Dairy Products'), 'cheese': (2, 'Dairy Products'),
+            'butter': (2, 'Dairy Products'), 'yogurt': (2, 'Dairy Products'),
+            'yoghurt': (2, 'Dairy Products'), 'cream': (2, 'Dairy Products'),
+            'eggs': (2, 'Dairy Products'), 'egg': (2, 'Dairy Products'),
 
             # Beverages - Shelf 3
-            'water': 3, 'juice': 3, 'soda': 3, 'coffee': 3, 'tea': 3, 'beer': 3,
-            'wine': 3, 'cola': 3, 'pepsi': 3, 'sprite': 3,
+            'water': (3, 'Beverages'), 'juice': (3, 'Beverages'),
+            'soda': (3, 'Beverages'), 'coffee': (3, 'Beverages'),
+            'tea': (3, 'Beverages'), 'beer': (3, 'Beverages'),
+            'wine': (3, 'Beverages'), 'cola': (3, 'Beverages'),
 
             # Meat & Seafood - Shelf 4
-            'chicken': 4, 'beef': 4, 'pork': 4, 'fish': 4, 'salmon': 4, 'tuna': 4,
-            'shrimp': 4, 'meat': 4,
+            'chicken': (4, 'Meat & Seafood'), 'beef': (4, 'Meat & Seafood'),
+            'pork': (4, 'Meat & Seafood'), 'fish': (4, 'Meat & Seafood'),
+            'salmon': (4, 'Meat & Seafood'), 'tuna': (4, 'Meat & Seafood'),
+            'shrimp': (4, 'Meat & Seafood'), 'meat': (4, 'Meat & Seafood'),
 
             # Cleaning Products - Shelf 5
-            'detergent': 5, 'soap': 5, 'shampoo': 5, 'toothpaste': 5, 'tissue': 5,
-            'tissues': 5, 'towel': 5, 'towels': 5, 'bleach': 5,
+            'detergent': (5, 'Cleaning Products'), 'soap': (5, 'Cleaning Products'),
+            'shampoo': (5, 'Cleaning Products'), 'toothpaste': (5, 'Cleaning Products'),
+            'tissue': (5, 'Cleaning Products'), 'tissues': (5, 'Cleaning Products'),
 
             # Bread & Bakery - Shelf 6
-            'bread': 6, 'cake': 6, 'cookies': 6, 'cookie': 6, 'muffin': 6, 'muffins': 6,
-            'bagel': 6, 'bagels': 6,
+            'bread': (6, 'Bread & Bakery'), 'cake': (6, 'Bread & Bakery'),
+            'cookies': (6, 'Bread & Bakery'), 'cookie': (6, 'Bread & Bakery'),
+            'muffin': (6, 'Bread & Bakery'), 'muffins': (6, 'Bread & Bakery'),
+            'bagel': (6, 'Bread & Bakery'), 'bagels': (6, 'Bread & Bakery'),
 
             # Snacks & Candy - Shelf 7
-            'chips': 7, 'chocolate': 7, 'candy': 7, 'nuts': 7, 'crackers': 7,
-            'popcorn': 7, 'gum': 7,
+            'chips': (7, 'Snacks & Candy'), 'chocolate': (7, 'Snacks & Candy'),
+            'candy': (7, 'Snacks & Candy'), 'nuts': (7, 'Snacks & Candy'),
 
             # Pasta & Rice - Shelf 8
-            'pasta': 8, 'rice': 8, 'noodles': 8, 'spaghetti': 8, 'macaroni': 8,
-            'quinoa': 8, 'beans': 8, 'lentils': 8,
+            'pasta': (8, 'Pasta & Rice'), 'rice': (8, 'Pasta & Rice'),
+            'noodles': (8, 'Pasta & Rice'), 'spaghetti': (8, 'Pasta & Rice'),
 
             # Frozen Foods - Shelf 9
-            'ice': 9, 'icecream': 9, 'pizza': 9, 'vegetables': 9, 'fries': 9,
-            'burger': 9, 'burgers': 9,
+            'ice': (9, 'Frozen Foods'), 'icecream': (9, 'Frozen Foods'),
+            'pizza': (9, 'Frozen Foods'), 'fries': (9, 'Frozen Foods'),
 
             # Spices & Condiments - Shelf 10
-            'salt': 10, 'pepper': 10, 'sugar': 10, 'oil': 10, 'vinegar': 10,
-            'sauce': 10, 'ketchup': 10, 'mustard': 10, 'mayo': 10, 'mayonnaise': 10
+            'salt': (10, 'Spices & Condiments'), 'pepper': (10, 'Spices & Condiments'),
+            'sugar': (10, 'Spices & Condiments'), 'oil': (10, 'Spices & Condiments'),
         }
 
         # Initialize NLP components
@@ -166,307 +151,384 @@ class SupermarketChatbotGUI:
 
     def setup_ui(self):
         """Create the user interface"""
-        # Main container
-        main_frame = tk.Frame(self.root, bg=self.colors['background'])
-        main_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Header
+        self.create_header()
+        
+        # Main chat area
+        self.create_chat_area()
+        
+        # Input area
+        self.create_input_area()
 
-        # Header section
-        self.create_header(main_frame)
-
-        # Main content area
-        content_frame = tk.Frame(main_frame, bg=self.colors['background'])
-        content_frame.pack(fill='both', expand=True, pady=(20, 0))
-
-        # Left panel - Input and controls
-        self.create_input_panel(content_frame)
-
-        # Right panel - Results and shopping list
-        self.create_results_panel(content_frame)
-
-        # Status bar
-        self.create_status_bar(main_frame)
-
-    def create_header(self, parent):
+    def create_header(self):
         """Create the header section"""
-        header_frame = tk.Frame(parent, bg=self.colors['surface'], relief='flat', bd=1)
-        header_frame.pack(fill='x', pady=(0, 10))
-
-        # Add shadow effect
-        shadow_frame = tk.Frame(parent, bg='#e5e7eb', height=2)
+        header_frame = tk.Frame(self.root, bg=self.colors['surface'], height=80)
+        header_frame.pack(fill='x', padx=0, pady=0)
+        header_frame.pack_propagate(False)
+        
+        # Add subtle shadow
+        shadow_frame = tk.Frame(self.root, bg=self.colors['border'], height=1)
         shadow_frame.pack(fill='x')
-
+        
         # Header content
         header_content = tk.Frame(header_frame, bg=self.colors['surface'])
-        header_content.pack(fill='x', padx=30, pady=20)
-
+        header_content.pack(fill='both', expand=True, padx=20, pady=15)
+        
+        # Shopping cart icon and title
+        title_frame = tk.Frame(header_content, bg=self.colors['surface'])
+        title_frame.pack(anchor='w')
+        
+        # Icon circle
+        icon_frame = tk.Frame(title_frame, bg=self.colors['primary'], width=50, height=50)
+        icon_frame.pack(side='left', pady=5)
+        icon_frame.pack_propagate(False)
+        
+        icon_label = tk.Label(icon_frame, text="🛒", font=('Segoe UI', 20),
+                             bg=self.colors['primary'], fg='white')
+        icon_label.place(relx=0.5, rely=0.5, anchor='center')
+        
         # Title and subtitle
-        title_label = tk.Label(header_content,
-                               text="🛒 Supermarket Assistant Chatbot",
-                               font=('Segoe UI', 24, 'bold'),
-                               bg=self.colors['surface'],
-                               fg=self.colors['primary'])
+        text_frame = tk.Frame(title_frame, bg=self.colors['surface'])
+        text_frame.pack(side='left', padx=(15, 0), fill='y')
+        
+        title_label = tk.Label(text_frame, text="Supermarket Assistant",
+                              font=('Segoe UI', 18, 'bold'),
+                              bg=self.colors['surface'],
+                              fg=self.colors['text_dark'])
         title_label.pack(anchor='w')
+        
+        subtitle_label = tk.Label(text_frame, text="Find shelf locations for your items",
+                                 font=('Segoe UI', 11),
+                                 bg=self.colors['surface'],
+                                 fg=self.colors['text_light'])
+        subtitle_label.pack(anchor='w')
 
-        subtitle_label = tk.Label(header_content,
-                                  text="Find shelf locations for your shopping items using Natural Language Processing",
-                                  font=('Segoe UI', 12),
-                                  bg=self.colors['surface'],
-                                  fg=self.colors['text_light'])
-        subtitle_label.pack(anchor='w', pady=(5, 0))
+    def create_chat_area(self):
+        """Create the main chat area"""
+        # Chat container
+        chat_container = tk.Frame(self.root, bg=self.colors['background'])
+        chat_container.pack(fill='both', expand=True, padx=15, pady=15)
+        
+        # Scrollable chat area
+        self.chat_canvas = tk.Canvas(chat_container, bg=self.colors['background'], 
+                                   highlightthickness=0, bd=0)
+        self.chat_scrollbar = ttk.Scrollbar(chat_container, orient="vertical", 
+                                          command=self.chat_canvas.yview)
+        self.chat_frame = tk.Frame(self.chat_canvas, bg=self.colors['background'])
+        
+        self.chat_canvas.configure(yscrollcommand=self.chat_scrollbar.set)
+        self.chat_canvas.create_window((0, 0), window=self.chat_frame, anchor="nw")
+        
+        # Pack scrollbar and canvas
+        self.chat_scrollbar.pack(side="right", fill="y")
+        self.chat_canvas.pack(side="left", fill="both", expand=True)
+        
+        # Bind canvas events
+        self.chat_frame.bind('<Configure>', self._on_frame_configure)
+        self.chat_canvas.bind('<Configure>', self._on_canvas_configure)
 
-    def create_input_panel(self, parent):
-        """Create the input panel"""
-        input_frame = tk.Frame(parent, bg=self.colors['background'])
-        input_frame.pack(side='left', fill='both', expand=True, padx=(0, 10))
-
-        # Input card
-        input_card = tk.Frame(input_frame, bg=self.colors['surface'], relief='flat', bd=1)
-        input_card.pack(fill='both', expand=True)
-
-        # Add shadow
-        shadow = tk.Frame(input_frame, bg='#e5e7eb', height=2)
-        shadow.place(in_=input_card, x=2, y=2, relwidth=1, relheight=1)
-        input_card.lift()
-
-        # Input card header
-        input_header = tk.Frame(input_card, bg=self.colors['surface'])
-        input_header.pack(fill='x', padx=20, pady=(20, 10))
-
-        tk.Label(input_header,
-                 text="📝 What would you like to buy?",
-                 font=('Segoe UI', 14, 'bold'),
-                 bg=self.colors['surface'],
-                 fg=self.colors['text']).pack(anchor='w')
-
-        tk.Label(input_header,
-                 text="Enter your shopping items in natural language",
-                 font=('Segoe UI', 10),
-                 bg=self.colors['surface'],
-                 fg=self.colors['text_light']).pack(anchor='w', pady=(2, 0))
-
-        # Input area
-        input_area = tk.Frame(input_card, bg=self.colors['surface'])
-        input_area.pack(fill='both', expand=True, padx=20, pady=(0, 20))
-
-        # Text input
-        self.input_text = scrolledtext.ScrolledText(input_area,
-                                                    height=4,
-                                                    font=('Segoe UI', 11),
-                                                    wrap='word',
-                                                    relief='solid',
-                                                    borderwidth=1,
-                                                    padx=10,
-                                                    pady=10)
-        self.input_text.pack(fill='x', pady=(0, 15))
-
-        # Placeholder text
-        self.input_placeholder = "Type your shopping list here... (e.g., 'I want to buy apples, milk, and bread')"
-        self.input_text.insert('1.0', self.input_placeholder)
-        self.input_text.configure(fg=self.colors['text_light'])
-
-        # Button frame
-        button_frame = tk.Frame(input_area, bg=self.colors['surface'])
-        button_frame.pack(fill='x')
-
-        # Process button
-        self.process_btn = tk.Button(button_frame,
-                                     text="🔍 Find Items",
-                                     font=('Segoe UI', 11, 'bold'),
-                                     bg=self.colors['primary'],
-                                     fg='white',
-                                     relief='flat',
-                                     padx=20,
-                                     pady=10,
-                                     cursor='hand2',
-                                     command=self.process_shopping_list)
-        self.process_btn.pack(side='left')
-
-        # Clear button
-        clear_btn = tk.Button(button_frame,
-                              text="🗑️ Clear",
-                              font=('Segoe UI', 10),
-                              bg='#f3f4f6',
-                              fg=self.colors['text'],
-                              relief='flat',
-                              padx=15,
-                              pady=8,
-                              cursor='hand2',
-                              command=self.clear_input)
-        clear_btn.pack(side='left', padx=(10, 0))
-
-        # Example buttons
-        examples_frame = tk.Frame(input_area, bg=self.colors['surface'])
-        examples_frame.pack(fill='x', pady=(15, 0))
-
-        tk.Label(examples_frame,
-                 text="💡 Try these examples:",
-                 font=('Segoe UI', 10, 'bold'),
-                 bg=self.colors['surface'],
-                 fg=self.colors['text']).pack(anchor='w')
-
-        examples = [
-            "apples, milk, bread",
-            "I need chicken, rice, and ice cream",
-            "chocolate, cookies, cheese, pizza"
-        ]
-
-        for example in examples:
-            btn = tk.Button(examples_frame,
-                            text=f"✨ {example}",
-                            font=('Segoe UI', 9),
-                            bg='#f8fafc',
-                            fg=self.colors['primary'],
-                            relief='flat',
-                            cursor='hand2',
-                            padx=10,
-                            pady=5,
-                            command=lambda e=example: self.set_example(e))
-            btn.pack(anchor='w', pady=2)
-
-    def create_results_panel(self, parent):
-        """Create the results panel"""
-        results_frame = tk.Frame(parent, bg=self.colors['background'])
-        results_frame.pack(side='right', fill='both', expand=True, padx=(10, 0))
-
-        # Results card
-        results_card = tk.Frame(results_frame, bg=self.colors['surface'], relief='flat', bd=1)
-        results_card.pack(fill='both', expand=True)
-
-        # Add shadow
-        shadow = tk.Frame(results_frame, bg='#e5e7eb', height=2)
-        shadow.place(in_=results_card, x=2, y=2, relwidth=1, relheight=1)
-        results_card.lift()
-
-        # Results header
-        results_header = tk.Frame(results_card, bg=self.colors['surface'])
-        results_header.pack(fill='x', padx=20, pady=(20, 10))
-
-        self.results_title = tk.Label(results_header,
-                                      text="📋 Shopping List",
-                                      font=('Segoe UI', 14, 'bold'),
-                                      bg=self.colors['surface'],
-                                      fg=self.colors['text'])
-        self.results_title.pack(anchor='w')
-
-        self.results_subtitle = tk.Label(results_header,
-                                         text="Your items will appear here",
-                                         font=('Segoe UI', 10),
-                                         bg=self.colors['surface'],
-                                         fg=self.colors['text_light'])
-        self.results_subtitle.pack(anchor='w', pady=(2, 0))
-
-        # Results display area
-        results_display = tk.Frame(results_card, bg=self.colors['surface'])
-        results_display.pack(fill='both', expand=True, padx=20, pady=(0, 20))
-
-        # Results text area
-        self.results_text = scrolledtext.ScrolledText(results_display,
-                                                      font=('Courier New', 10),
-                                                      wrap='word',
-                                                      relief='solid',
-                                                      borderwidth=1,
-                                                      padx=15,
-                                                      pady=15,
-                                                      state='disabled')
-        self.results_text.pack(fill='both', expand=True)
-
-        # Action buttons frame
-        action_frame = tk.Frame(results_display, bg=self.colors['surface'])
-        action_frame.pack(fill='x', pady=(15, 0))
-
-        # Save button
-        self.save_btn = tk.Button(action_frame,
-                                  text="💾 Save List",
-                                  font=('Segoe UI', 10, 'bold'),
-                                  bg=self.colors['secondary'],
-                                  fg='white',
-                                  relief='flat',
-                                  padx=15,
-                                  pady=8,
-                                  cursor='hand2',
-                                  command=self.save_shopping_list,
-                                  state='disabled')
-        self.save_btn.pack(side='left')
-
-        # Print button
-        self.print_btn = tk.Button(action_frame,
-                                   text="🖨️ Print List",
-                                   font=('Segoe UI', 10),
-                                   bg='#6b7280',
-                                   fg='white',
-                                   relief='flat',
-                                   padx=15,
-                                   pady=8,
-                                   cursor='hand2',
-                                   command=self.print_shopping_list,
-                                   state='disabled')
-        self.print_btn.pack(side='left', padx=(10, 0))
-
-    def create_status_bar(self, parent):
-        """Create the status bar"""
-        self.status_frame = tk.Frame(parent, bg=self.colors['surface'], relief='flat', bd=1)
-        self.status_frame.pack(fill='x', pady=(10, 0))
-
-        self.status_label = tk.Label(self.status_frame,
-                                     text="Ready to help you find your shopping items! 🛒",
-                                     font=('Segoe UI', 9),
-                                     bg=self.colors['surface'],
-                                     fg=self.colors['text_light'],
-                                     anchor='w')
-        self.status_label.pack(side='left', padx=20, pady=8)
-
-        # NLP status
-        nlp_status = "NLP: NLTK"
-        if self.use_spacy:
-            nlp_status += " + spaCy"
-
-        self.nlp_status_label = tk.Label(self.status_frame,
-                                         text=nlp_status,
-                                         font=('Segoe UI', 9),
-                                         bg=self.colors['surface'],
-                                         fg=self.colors['success'])
-        self.nlp_status_label.pack(side='right', padx=20, pady=8)
+    def create_input_area(self):
+        """Create the input area"""
+        # Input container with rounded border effect
+        input_container = tk.Frame(self.root, bg=self.colors['background'])
+        input_container.pack(fill='x', padx=15, pady=(0, 15))
+        
+        # Input frame with border
+        input_frame = tk.Frame(input_container, bg=self.colors['border'], relief='solid', bd=1)
+        input_frame.pack(fill='x')
+        
+        # Inner frame
+        inner_frame = tk.Frame(input_frame, bg=self.colors['surface'])
+        inner_frame.pack(fill='x', padx=1, pady=1)
+        
+        # Message input and send button in same row
+        message_frame = tk.Frame(inner_frame, bg=self.colors['surface'])
+        message_frame.pack(fill='x', padx=15, pady=12)
+        
+        # Message input
+        self.message_entry = tk.Text(message_frame, height=1, font=('Segoe UI', 12),
+                                   wrap='word', relief='flat', bd=0,
+                                   bg=self.colors['surface'],
+                                   fg=self.colors['text_dark'])
+        self.message_entry.pack(side='left', fill='both', expand=True, padx=(0, 10))
+        
+        # Placeholder
+        self.placeholder_text = "Ask me about shelf locations... (e.g., 'I need milk and bread')"
+        self.message_entry.insert('1.0', self.placeholder_text)
+        self.message_entry.configure(fg=self.colors['text_light'])
+        
+        # Send button (arrow icon)
+        self.send_btn = tk.Button(message_frame, text="➤", font=('Segoe UI', 16),
+                                bg=self.colors['text_light'], fg=self.colors['surface'],
+                                relief='flat', width=3, height=1, cursor='hand2',
+                                command=self.send_message)
+        self.send_btn.pack(side='right')
 
     def setup_bindings(self):
         """Setup event bindings"""
-        # Input text focus events
-        self.input_text.bind('<FocusIn>', self.on_input_focus_in)
-        self.input_text.bind('<FocusOut>', self.on_input_focus_out)
-
+        # Input focus events
+        self.message_entry.bind('<FocusIn>', self.on_input_focus_in)
+        self.message_entry.bind('<FocusOut>', self.on_input_focus_out)
+        
         # Enter key binding
-        self.input_text.bind('<Control-Return>', lambda e: self.process_shopping_list())
+        self.message_entry.bind('<Return>', self.on_enter_key)
+        
+        # Mouse wheel scrolling
+        self.chat_canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.chat_frame.bind("<MouseWheel>", self._on_mousewheel)
 
-        # Window close event
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+    def _on_frame_configure(self, event=None):
+        """Reset the scroll region to encompass the inner frame"""
+        self.chat_canvas.configure(scrollregion=self.chat_canvas.bbox("all"))
+        self._scroll_to_bottom()
+
+    def _on_canvas_configure(self, event):
+        """Reset the canvas window to encompass inner frame when required"""
+        canvas_width = event.width
+        self.chat_canvas.itemconfig(self.chat_canvas.find_all()[0], width=canvas_width)
+
+    def _on_mousewheel(self, event):
+        """Handle mouse wheel scrolling"""
+        try:
+            if event.delta:
+                delta = -1 * (event.delta / 120)
+            else:
+                delta = -1 if event.num == 4 else 1
+            self.chat_canvas.yview_scroll(int(delta), "units")
+        except:
+            pass
+
+    def _scroll_to_bottom(self):
+        """Scroll to the bottom of the chat"""
+        self.root.after(100, lambda: self.chat_canvas.yview_moveto(1.0))
 
     def on_input_focus_in(self, event):
         """Handle input focus in"""
-        if self.input_text.get('1.0', 'end-1c') == self.input_placeholder:
-            self.input_text.delete('1.0', 'end')
-            self.input_text.configure(fg=self.colors['text'])
+        if self.message_entry.get('1.0', 'end-1c') == self.placeholder_text:
+            self.message_entry.delete('1.0', 'end')
+            self.message_entry.configure(fg=self.colors['text_dark'])
 
     def on_input_focus_out(self, event):
         """Handle input focus out"""
-        if not self.input_text.get('1.0', 'end-1c').strip():
-            self.input_text.insert('1.0', self.input_placeholder)
-            self.input_text.configure(fg=self.colors['text_light'])
+        current_text = self.message_entry.get('1.0', 'end-1c').strip()
+        if not current_text:
+            self.message_entry.delete('1.0', 'end')
+            self.message_entry.insert('1.0', self.placeholder_text)
+            self.message_entry.configure(fg=self.colors['text_light'])
 
-    def set_example(self, example):
-        """Set example text in input"""
-        self.clear_input()
-        self.input_text.insert('1.0', example)
-        self.input_text.configure(fg=self.colors['text'])
+    def on_enter_key(self, event):
+        """Handle Enter key press"""
+        current_text = self.message_entry.get('1.0', 'end-1c').strip()
+        if current_text and current_text != self.placeholder_text:
+            self.send_message()
+        return 'break'
 
-    def clear_input(self):
-        """Clear input text"""
-        self.input_text.delete('1.0', 'end')
-        self.input_text.insert('1.0', self.input_placeholder)
-        self.input_text.configure(fg=self.colors['text_light'])
+    def add_message(self, sender, message, timestamp=None):
+        """Add a message to the chat area"""
+        if timestamp is None:
+            timestamp = datetime.now().strftime('%I:%M %p')
+        
+        # Message container
+        msg_container = tk.Frame(self.chat_frame, bg=self.colors['background'])
+        msg_container.pack(fill='x', pady=8)
+        
+        if sender == "user":
+            # User message (right aligned, blue bubble)
+            user_frame = tk.Frame(msg_container, bg=self.colors['background'])
+            user_frame.pack(anchor='e', fill='x')
+            
+            # User message bubble
+            msg_bubble = tk.Frame(user_frame, bg=self.colors['user_bubble'],
+                                relief='flat', bd=0)
+            msg_bubble.pack(anchor='e', padx=(60, 0), pady=2)
+            
+            # Add rounded corner effect with padding
+            msg_label = tk.Label(msg_bubble, text=message, font=('Segoe UI', 11),
+                               bg=self.colors['user_bubble'], fg='white',
+                               wraplength=250, justify='left', padx=16, pady=12)
+            msg_label.pack()
+            
+            # Timestamp
+            time_label = tk.Label(user_frame, text=timestamp, font=('Segoe UI', 9),
+                                bg=self.colors['background'], fg=self.colors['text_light'])
+            time_label.pack(anchor='e', padx=(0, 10), pady=(2, 0))
+            
+        else:
+            # Assistant message (left aligned with icon)
+            assistant_frame = tk.Frame(msg_container, bg=self.colors['background'])
+            assistant_frame.pack(anchor='w', fill='x')
+            
+            # Icon and message container
+            content_frame = tk.Frame(assistant_frame, bg=self.colors['background'])
+            content_frame.pack(anchor='w', fill='x')
+            
+            # Assistant icon
+            icon_frame = tk.Frame(content_frame, bg=self.colors['success'], width=32, height=32)
+            icon_frame.pack(side='left', padx=(0, 12), pady=2)
+            icon_frame.pack_propagate(False)
+            
+            icon_label = tk.Label(icon_frame, text="🛒", font=('Segoe UI', 16),
+                                bg=self.colors['success'], fg='white')
+            icon_label.place(relx=0.5, rely=0.5, anchor='center')
+            
+            # Message content
+            msg_content_frame = tk.Frame(content_frame, bg=self.colors['background'])
+            msg_content_frame.pack(side='left', fill='both', expand=True)
+            
+            # Message bubble
+            msg_bubble = tk.Frame(msg_content_frame, bg=self.colors['assistant_bubble'],
+                                relief='flat', bd=0)
+            msg_bubble.pack(anchor='w', fill='x', padx=(0, 60), pady=2)
+            
+            msg_label = tk.Label(msg_bubble, text=message, font=('Segoe UI', 11),
+                               bg=self.colors['assistant_bubble'], fg=self.colors['text_dark'],
+                               wraplength=280, justify='left', padx=16, pady=12)
+            msg_label.pack(anchor='w')
+            
+            # Timestamp
+            time_label = tk.Label(msg_content_frame, text=timestamp, font=('Segoe UI', 9),
+                                bg=self.colors['background'], fg=self.colors['text_light'])
+            time_label.pack(anchor='w', padx=(0, 0), pady=(2, 0))
+        
+        # Update scroll region and scroll to bottom
+        self.chat_frame.update_idletasks()
+        self._on_frame_configure()
 
-    def update_status(self, message, color='text_light'):
-        """Update status bar message"""
-        self.status_label.configure(text=message, fg=self.colors[color])
-        self.root.update_idletasks()
+    def send_message(self):
+        """Send a message"""
+        message = self.message_entry.get('1.0', 'end-1c').strip()
+        
+        if message == self.placeholder_text or not message:
+            return
+        
+        # Add user message
+        self.add_message("user", message)
+        
+        # Clear input
+        self.message_entry.delete('1.0', 'end')
+        self.message_entry.configure(fg=self.colors['text_dark'])
+        
+        # Disable send button
+        self.send_btn.configure(state='disabled', bg=self.colors['border'])
+        
+        # Log transaction
+        transaction = {
+            'timestamp': datetime.now().isoformat(),
+            'user_input': message,
+            'session_id': self.session_id
+        }
+        
+        # Process in separate thread
+        def process_request():
+            try:
+                response, results = self.process_shopping_request(message)
+                transaction['response'] = response
+                transaction['items_found'] = results
+                self.transactions.append(transaction)
+                
+                self.root.after(0, lambda: self.handle_response(response))
+                
+            except Exception as e:
+                error_msg = f"Sorry, I encountered an error: {str(e)}"
+                transaction['response'] = error_msg
+                transaction['error'] = True
+                self.transactions.append(transaction)
+                
+                self.root.after(0, lambda: self.handle_response(error_msg))
+        
+        thread = threading.Thread(target=process_request)
+        thread.daemon = True
+        thread.start()
+
+    def handle_response(self, response):
+        """Handle the assistant's response"""
+        self.add_message("assistant", response)
+        
+        # Re-enable send button and show placeholder
+        self.send_btn.configure(state='normal', bg=self.colors['text_light'])
+        if not self.message_entry.get('1.0', 'end-1c').strip():
+            self.message_entry.insert('1.0', self.placeholder_text)
+            self.message_entry.configure(fg=self.colors['text_light'])
+
+    def process_shopping_request(self, user_input):
+        """Process the shopping request using NLP"""
+        user_lower = user_input.lower().strip()
+        
+        # Handle greetings
+        greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening']
+        if user_lower in greetings:
+            return "Hello! I'm here to help you find items in the supermarket. What would you like to buy today?", {}
+        
+        # Handle thanks
+        thanks = ['thanks', 'thank you', 'thanks!', 'thank you!']
+        if any(thank in user_lower for thank in thanks):
+            return "You're welcome! Is there anything else you'd like to find? 😊", {}
+        
+        # Extract items
+        extracted_items = self.extract_items(user_input)
+        
+        if not extracted_items:
+            return "I didn't detect any shopping items in your message. Could you tell me what products you're looking for?\n\nFor example: 'apples', 'milk', 'bread', etc.", {}
+        
+        # Find shelf locations
+        results, not_found = self.find_shelf_locations(extracted_items)
+        
+        if results:
+            response = "Great! I found these items for you:\n\n"
+            
+            # Group by shelf and category
+            shelf_groups = defaultdict(list)
+            shelf_categories = {}
+            
+            for item, (shelf, category) in results.items():
+                shelf_groups[shelf].append(item.capitalize())
+                shelf_categories[shelf] = category
+            
+            # Format response with location pins and categories
+            for shelf in sorted(shelf_groups.keys()):
+                items_list = ", ".join(shelf_groups[shelf])
+                category = shelf_categories[shelf]
+                response += f"📍 **Shelf {shelf}** ({category}):\n• {items_list}\n\n"
+            
+            if not_found:
+                response += f"❌ Sorry, I couldn't find: {', '.join(not_found)}\n\n"
+            
+            response += "Is there anything else you'd like to find?"
+        else:
+            response = f"I couldn't find any of these items in our database: {', '.join(extracted_items)}\n\nCould you try different item names? For example: 'apples', 'milk', 'bread', etc."
+        
+        return response, results
+
+    def extract_items(self, text):
+        """Main item extraction function"""
+        clean_text = self.preprocess_text(text)
+        
+        # Check for greetings
+        greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'thanks', 'thank you']
+        if clean_text.strip() in greetings:
+            return []
+        
+        # Remove helper phrases
+        helper_phrases = ['i need', 'i want', 'i would like', 'can you find', 'where is', 'where are', 'looking for', 'buy']
+        for phrase in helper_phrases:
+            clean_text = re.sub(r'\b' + phrase + r'\b', '', clean_text)
+        
+        if self.use_spacy:
+            items = self.extract_items_spacy(clean_text)
+        else:
+            items = self.extract_items_nltk(clean_text)
+        
+        simple_split = [item.strip() for item in re.split(r'[,\s]+and\s+|\s*,\s*', clean_text) if item.strip()]
+        all_items = list(set(items + simple_split))
+        
+        # Enhanced filtering
+        filtered_items = [item for item in all_items if item not in [
+            'want', 'buy', 'need', 'get', 'purchase', 'find', 'looking', 'for', 'can', 'you', 
+            'where', 'is', 'are', 'the', 'some', 'any', 'would', 'like', 'to', 'do', 'have',
+            'hi', 'hello', 'hey', 'thanks', 'thank', 'please', 'yes', 'no', 'ok', 'okay'
+        ] and len(item) > 1]
+        
+        return filtered_items
 
     def preprocess_text(self, text):
         """Clean and preprocess input text"""
@@ -481,7 +543,6 @@ class SupermarketChatbotGUI:
         try:
             tokens = word_tokenize(text)
             pos_tags = pos_tag(tokens)
-
             items = []
             for word, pos in pos_tags:
                 if (pos in ['NN', 'NNS', 'NNP', 'NNPS'] and
@@ -490,272 +551,91 @@ class SupermarketChatbotGUI:
                     items.append(word.lower())
             return items
         except:
-            # Fallback to simple splitting
             return [item.strip() for item in text.split(',') if item.strip()]
 
     def extract_items_spacy(self, text):
         """Extract items using spaCy NER and POS tagging"""
         doc = self.nlp(text)
         items = []
-
         for ent in doc.ents:
             if ent.label_ in ['PRODUCT', 'ORG']:
                 items.append(ent.text.lower())
-
         for token in doc:
-            if (token.pos_ == 'NOUN' and
-                    not token.is_stop and
-                    len(token.text) > 2 and
+            if (token.pos_ == 'NOUN' and not token.is_stop and len(token.text) > 2 and
                     token.text.lower() not in [item.lower() for item in items]):
                 items.append(token.text.lower())
-
         return items
-
-    def extract_items(self, text):
-        """Main item extraction function"""
-        clean_text = self.preprocess_text(text)
-
-        if self.use_spacy:
-            items = self.extract_items_spacy(clean_text)
-        else:
-            items = self.extract_items_nltk(clean_text)
-
-        # Also try simple splitting
-        simple_split = [item.strip() for item in re.split(r'[,\s]+and\s+|\s*,\s*', clean_text) if item.strip()]
-
-        # Combine and filter
-        all_items = list(set(items + simple_split))
-        filtered_items = [item for item in all_items if item not in ['want', 'buy', 'need', 'get', 'purchase']]
-
-        return filtered_items
 
     def find_shelf_locations(self, items):
         """Find shelf locations for extracted items"""
         results = {}
         not_found = []
-
         for item in items:
             item_lower = item.lower().strip()
             if item_lower in self.product_database:
                 results[item] = self.product_database[item_lower]
             else:
-                # Try partial matches
                 found = False
                 for product_key in self.product_database.keys():
                     if item_lower in product_key or product_key in item_lower:
                         results[item] = self.product_database[product_key]
                         found = True
                         break
-
                 if not found:
                     not_found.append(item)
-
         return results, not_found
 
-    def generate_shopping_list(self, results):
-        """Generate formatted shopping list"""
-        if not results:
-            return "No items found in our database.", {}
-
-        # Group items by shelf
-        shelf_groups = defaultdict(list)
-        for item, shelf in results.items():
-            shelf_groups[shelf].append(item)
-
-        # Generate formatted list
-        lines = []
-        lines.append("=" * 60)
-        lines.append("🛒 SUPERMARKET SHOPPING LIST")
-        lines.append("=" * 60)
-        lines.append(f"📅 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        lines.append("")
-
-        # Sort by shelf number
-        for shelf in sorted(shelf_groups.keys()):
-            lines.append(f"📍 SHELF {shelf}:")
-            for item in shelf_groups[shelf]:
-                lines.append(f"   • {item.capitalize()}")
-            lines.append("")
-
-        lines.append("=" * 60)
-        lines.append("✨ Happy Shopping! ✨")
-        lines.append("=" * 60)
-
-        return "\n".join(lines), shelf_groups
-
-    def process_shopping_list(self):
-        """Process the shopping list input"""
-        # Get input text
-        user_input = self.input_text.get('1.0', 'end-1c').strip()
-
-        if user_input == self.input_placeholder or not user_input:
-            messagebox.showwarning("Input Required", "Please enter some items you'd like to buy!")
+    def save_transaction_log(self):
+        """Save transaction log to file"""
+        if not self.transactions:
+            messagebox.showinfo("No Data", "No transactions to save yet!")
             return
-
-        # Update UI state
-        self.process_btn.configure(state='disabled', text="🔄 Processing...")
-        self.update_status("🔍 Analyzing your shopping list...", 'primary')
-
-        def process_in_thread():
-            try:
-                # Extract items
-                self.root.after(0, lambda: self.update_status("🔍 Extracting items using NLP...", 'primary'))
-                extracted_items = self.extract_items(user_input)
-
-                # Find shelf locations
-                self.root.after(0, lambda: self.update_status("📍 Looking up shelf locations...", 'primary'))
-                results, not_found = self.find_shelf_locations(extracted_items)
-
-                # Generate shopping list
-                shopping_list, shelf_groups = self.generate_shopping_list(results)
-
-                # Update UI on main thread
-                self.root.after(0, lambda: self.update_results(shopping_list, results, not_found, shelf_groups))
-
-            except Exception as e:
-                self.root.after(0, lambda: self.show_error(f"An error occurred: {str(e)}"))
-
-        # Run processing in separate thread
-        thread = threading.Thread(target=process_in_thread)
-        thread.daemon = True
-        thread.start()
-
-    def update_results(self, shopping_list, results, not_found, shelf_groups):
-        """Update the results display"""
-        # Enable text widget for updates
-        self.results_text.configure(state='normal')
-        self.results_text.delete('1.0', 'end')
-
-        # Insert shopping list
-        self.results_text.insert('end', shopping_list)
-
-        # Add not found items if any
-        if not_found:
-            self.results_text.insert('end', "\n\n❌ ITEMS NOT FOUND:\n")
-            for item in not_found:
-                self.results_text.insert('end', f"   • {item.capitalize()} (not in our database)\n")
-
-        # Disable text widget
-        self.results_text.configure(state='disabled')
-
-        # Update titles and status
-        found_count = len(results)
-        total_count = found_count + len(not_found)
-
-        self.results_title.configure(text=f"📋 Shopping List ({found_count} items found)")
-        if shelf_groups:
-            shelf_count = len(shelf_groups)
-            self.results_subtitle.configure(text=f"Items organized across {shelf_count} shelves")
-
-        # Enable action buttons
-        if results:
-            self.save_btn.configure(state='normal')
-            self.print_btn.configure(state='normal')
-
-        # Update status
-        if results:
-            self.update_status(f"✅ Found {found_count} items across {len(shelf_groups)} shelves!", 'success')
-        else:
-            self.update_status("❌ No items found in database. Try different item names.", 'error')
-
-        # Re-enable process button
-        self.process_btn.configure(state='normal', text="🔍 Find Items")
-
-        # Store current results for saving
-        self.current_shopping_list = shopping_list
-
-    def show_error(self, message):
-        """Show error message"""
-        messagebox.showerror("Error", message)
-        self.process_btn.configure(state='normal', text="🔍 Find Items")
-        self.update_status("❌ An error occurred. Please try again.", 'error')
-
-    def save_shopping_list(self):
-        """Save shopping list to file"""
-        if not hasattr(self, 'current_shopping_list'):
-            return
-
-        # Ask for filename
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        default_filename = f"shopping_list_{timestamp}.txt"
-
+        
         filename = filedialog.asksaveasfilename(
-            title="Save Shopping List",
+            title="Save Chat Log",
             defaultextension=".txt",
-            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=default_filename
+            filetypes=[("Text files", "*.txt"), ("JSON files", "*.json")],
+            initialfile=f"supermarket_chat_log_{self.session_id}.txt"
         )
-
+        
         if filename:
             try:
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(self.current_shopping_list)
-
-                messagebox.showinfo("Success",
-                                    f"Shopping list saved successfully!\n\nFile: {os.path.basename(filename)}")
-                self.update_status(f"💾 Saved as {os.path.basename(filename)}", 'success')
-
+                if filename.endswith('.json'):
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        json.dump(self.transactions, f, indent=2, ensure_ascii=False)
+                else:
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        f.write("="*60 + "\n")
+                        f.write("SUPERMARKET ASSISTANT CHAT LOG\n")
+                        f.write("="*60 + "\n")
+                        f.write(f"Session ID: {self.session_id}\n")
+                        f.write(f"Total Transactions: {len(self.transactions)}\n")
+                        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                        f.write("="*60 + "\n\n")
+                        
+                        for i, transaction in enumerate(self.transactions, 1):
+                            f.write(f"TRANSACTION {i}\n")
+                            f.write("-" * 20 + "\n")
+                            f.write(f"Time: {transaction['timestamp']}\n")
+                            f.write(f"User: {transaction['user_input']}\n")
+                            f.write(f"Assistant: {transaction['response']}\n")
+                            if 'items_found' in transaction:
+                                f.write(f"Items Found: {transaction['items_found']}\n")
+                            f.write("\n")
+                
+                messagebox.showinfo("Success", f"Chat log saved!\n\nFile: {os.path.basename(filename)}")
+                
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to save file:\n{str(e)}")
 
-    def print_shopping_list(self):
-        """Print shopping list (opens in notepad/default text editor)"""
-        if not hasattr(self, 'current_shopping_list'):
-            return
-
-        try:
-            # Create temporary file
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            temp_filename = f"temp_shopping_list_{timestamp}.txt"
-
-            with open(temp_filename, 'w', encoding='utf-8') as f:
-                f.write(self.current_shopping_list)
-
-            # Open with default system application
-            if sys.platform.startswith('win'):
-                os.startfile(temp_filename)
-            elif sys.platform.startswith('darwin'):
-                os.system(f'open "{temp_filename}"')
-            else:
-                os.system(f'xdg-open "{temp_filename}"')
-
-            self.update_status("🖨️ Shopping list opened for printing", 'success')
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to open file for printing:\n{str(e)}")
-
-    def on_closing(self):
-        """Handle window closing"""
-        # Clean up any temporary files
-        try:
-            for filename in os.listdir('.'):
-                if filename.startswith('temp_shopping_list_'):
-                    try:
-                        os.remove(filename)
-                    except:
-                        pass
-        except:
-            pass
-
-        self.root.destroy()
-
 
 def main():
-    """Main function to run the GUI application"""
-    # Create root window
+    """Main function to run the enhanced GUI application"""
     root = tk.Tk()
-
-    # Set window icon (if available)
-    try:
-        # You can add an icon file here if you have one
-        # root.iconbitmap('icon.ico')
-        pass
-    except:
-        pass
-
+    
     # Create and run the application
     app = SupermarketChatbotGUI(root)
-
+    
     # Center window on screen
     root.update_idletasks()
     width = root.winfo_width()
@@ -763,7 +643,7 @@ def main():
     x = (root.winfo_screenwidth() // 2) - (width // 2)
     y = (root.winfo_screenheight() // 2) - (height // 2)
     root.geometry(f"{width}x{height}+{x}+{y}")
-
+    
     # Start the GUI event loop
     root.mainloop()
 
