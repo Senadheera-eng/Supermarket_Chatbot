@@ -51,33 +51,33 @@ let currentShoppingList = [];
 
 // GREETING DETECTION SYSTEM
 const GREETING_RESPONSES = {
-    'hello': 'Hello there! Welcome to our smart supermarket assistant! How can I help you find items today?',
-    'hi': 'Hi! Great to see you! What items are you looking for in our store?',
-    'hey': 'Hey! Welcome! Tell me what products you need and I\'ll help you find them!',
-    'greetings': 'Greetings! I\'m your friendly supermarket assistant. What can I help you locate today?',
-    'good morning': 'Good morning! Ready to help you with your shopping. What items do you need?',
-    'good afternoon': 'Good afternoon! How can I assist with your shopping list today?',
-    'good evening': 'Good evening! Let me help you find everything you need!',
-    'howdy': 'Howdy! What brings you to our store today? What items can I help you find?',
-    'what\'s up': 'Not much, just here to help you find products! What are you shopping for?',
-    'whats up': 'Not much, just here to help you find products! What are you shopping for?'
+    'hello': 'Hello there! 👋 Welcome to our smart supermarket assistant! How can I help you find items today?',
+    'hi': 'Hi! 😊 Great to see you! What items are you looking for in our store?',
+    'hey': 'Hey! 🙌 Welcome! Tell me what products you need and I\'ll help you find them!',
+    'greetings': 'Greetings! 🤖 I\'m your friendly supermarket assistant. What can I help you locate today?',
+    'good morning': 'Good morning! ☀️ Ready to help you with your shopping. What items do you need?',
+    'good afternoon': 'Good afternoon! 🌞 How can I assist with your shopping list today?',
+    'good evening': 'Good evening! 🌙 Let me help you find everything you need!',
+    'howdy': 'Howdy! 🤠 What brings you to our store today? What items can I help you find?',
+    'what\'s up': 'Not much! 😄 Just here to help you find products! What are you shopping for?',
+    'whats up': 'Not much! 😄 Just here to help you find products! What are you shopping for?'
 };
 
 const THANKS_RESPONSES = {
-    'thank you': 'You\'re very welcome! Happy to help with anything else you need!',
-    'thanks': 'You\'re welcome! Let me know if you need help finding more items!',
-    'thx': 'No problem! Anything else I can help you locate?',
-    'thank u': 'You\'re so welcome! What else can I help you find?',
-    'ty': 'You\'re welcome! Need help with anything else?',
-    'cheers': 'Cheers to you too! Happy shopping!'
+    'thank you': 'You\'re very welcome! 😊 Happy to help with anything else you need!',
+    'thanks': 'You\'re welcome! 💙 Let me know if you need help finding more items!',
+    'thx': 'No problem! 👍 Anything else I can help you locate?',
+    'thank u': 'You\'re so welcome! 🤗 What else can I help you find?',
+    'ty': 'You\'re welcome! 😄 Need help with anything else?',
+    'cheers': 'Cheers to you too! 🥂 Happy shopping!'
 };
 
 const HELP_RESPONSES = {
-    'help': 'I\'d love to help! Just tell me what items you\'re looking for. For example: "I need apples and milk" or "Where can I find bread?" I know over 40 products!',
-    'help me': 'Of course! I can help you find products in our supermarket. Just tell me what you\'re shopping for!',
-    'i need help': 'I\'m here to help! Tell me what items you want to find and I\'ll show you exactly which shelf they\'re on!',
-    'can you help': 'Absolutely! I can help you locate any products in our store. What are you looking for?',
-    'assistance': 'Happy to provide assistance! What items do you need help finding today?'
+    'help': 'I\'d love to help! 🤝 Just tell me what items you\'re looking for. For example: "I need apples and milk" or "Where can I find bread?" I know over 40 products!',
+    'help me': 'Of course! 💪 I can help you find products in our supermarket. Just tell me what you\'re shopping for!',
+    'i need help': 'I\'m here to help! 🆘 Tell me what items you want to find and I\'ll show you exactly which shelf they\'re on!',
+    'can you help': 'Absolutely! ✅ I can help you locate any products in our store. What are you looking for?',
+    'assistance': 'Happy to provide assistance! 🤖 What items do you need help finding today?'
 };
 
 /**
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         userInput.focus();
     }
     
-    addMessageToChat('System ready! Try saying "hello" or type your shopping list.', 'bot');
+    addMessageToChat('System ready! Try saying "hello" or type your shopping list 🛒.', 'bot');
     
     console.log('Test functions available: testGreeting("hello"), testFuzzy("aples")');
 });
