@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         userInput.focus();
     }
     
-    addMessageToChat('System ready! Try saying "hello" or type your shopping list. I can handle misspellings too!', 'bot');
+    addMessageToChat('System ready! Try saying "hello" or type your shopping list 🛒.', 'bot');
     
     console.log('Test functions available: testGreeting("hello"), testFuzzy("aples")');
 });

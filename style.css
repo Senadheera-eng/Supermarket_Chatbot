@@ -192,8 +192,8 @@ body::before {
 }
 
 .message-avatar {
-    font-size: 1.5rem;
-    width: 40px;
+    font-size: 1.3rem; /* Slightly larger for better visibility */
+    width: 50px; /* Increased width to accommodate two icons */
     height: 40px;
     border-radius: 50%;
     display: flex;
@@ -202,6 +202,8 @@ body::before {
     flex-shrink: 0;
     background: var(--success-gradient);
     box-shadow: var(--shadow-soft);
+    line-height: 1;
+    text-align: center;
 }
 
 .bot-message {
@@ -276,11 +278,15 @@ body::before {
     display: flex;
     gap: 12px;
     margin-bottom: 15px;
+    width: 100%;
 }
 
 #userInput {
+    
     flex-grow: 1;
-    padding: 16px 20px;
+    min-width: 300px; 
+    padding: 12px 20px; 
+    font-size: 1rem; 
     border: 2px solid #e1e5e9;
     border-radius: var(--border-radius-large);
     font-size: 1rem;
