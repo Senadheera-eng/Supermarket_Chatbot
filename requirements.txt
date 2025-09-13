@@ -1,8 +1,0 @@
-nltk>=3.8
-spacy>=3.4.0
-# tkinter is usually included with Python, but if missing:
-# On Ubuntu/Debian: sudo apt-get install python3-tk
-# On CentOS/RHEL: sudo yum install tkinter
-
-# Optional: Download spaCy English model with: 
-# python -m spacy download en_core_web_sm

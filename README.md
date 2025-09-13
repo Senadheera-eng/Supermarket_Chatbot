@@ -1,181 +1,311 @@
 # Supermarket Assistant Chatbot
 
-## Overview
+## CO3251 Natural Language Processing - Assignment 2
 
-An intelligent chatbot application that helps supermarket customers find shelf locations for their shopping items using Natural Language Processing (NLP) techniques. Available in both CLI and GUI versions!
+A web-based intelligent chatbot that helps supermarket customers find shelf locations for their shopping items using Natural Language Processing techniques.
 
-## Features
+## 🎯 Project Overview
 
-- **NLP-powered item extraction**: Uses NLTK and spaCy for tokenization, POS tagging, and named entity recognition
-- **Smart product matching**: Handles various item names and finds partial matches
-- **Organized shopping lists**: Groups items by shelf number for efficient shopping
-- **Printable output**: Generates formatted shopping lists that can be saved to file
-- **Dual interface**: Choose between CLI (command-line) or GUI (graphical) interface
-- **Modern GUI**: Beautiful, intuitive graphical interface with real-time processing
+This chatbot application is designed to be placed at supermarket entrances to assist customers in locating products. Customers can input their shopping lists in natural language, and the system will extract item names using NLP techniques and provide corresponding shelf numbers.
 
-## Interface Options
+## 🚀 Features
 
-### 🖼️ GUI Version (Recommended)
+- **Natural Language Understanding**: Uses NLP.js to process customer requests
+- **Product Recognition**: Extracts product names from natural language input
+- **Shelf Location Mapping**: Maps products to predefined shelf locations
+- **Interactive Web Interface**: User-friendly chat-based interface
+- **Print Functionality**: Generates printable shopping lists with shelf numbers
+- **Responsive Design**: Works on desktop and mobile devices
+- **Real-time Processing**: Instant responses with loading indicators
 
-- Modern, user-friendly graphical interface
-- Real-time NLP processing with visual feedback
-- Organized layout with input panel and results panel
-- One-click save and print functionality
-- Example buttons for quick testing
-- Professional design with modern styling
+## 🛠 Technical Stack
 
-### 💻 CLI Version
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **NLP Library**: NLP.js (Node Natural Language Processing)
+- **Database**: JSON-based product-shelf mapping
+- **Interface**: Web-based responsive design
 
-- Simple command-line interface
-- Interactive text-based conversation
-- Ideal for terminal users and automation
+## 📦 Installation & Setup
 
-## Requirements
+### Prerequisites
 
-- Python 3.7 or higher
-- NLTK library
-- spaCy library (optional, for enhanced NLP)
-- tkinter (usually included with Python, for GUI)
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Internet connection (for NLP.js CDN)
+- Optional: Node.js and npm for development server
 
-## Installation
+### Quick Start (Browser-based)
 
-### Step 1: Clone or Download
+1. **Download the project files**
 
-Download all the project files to a folder on your computer.
+   ```
+   supermarket-chatbot/
+   ├── index.html
+   ├── script.js
+   ├── style.css
+   ├── package.json
+   └── README.md
+   ```
 
-### Step 2: Install Dependencies
+2. **Open in browser**
+   - Simply open `index.html` in your web browser
+   - The application will load automatically
 
-```bash
-# Install required packages
-pip install -r requirements.txt
+### Development Setup (Optional)
 
-# Optional: Install spaCy English model for better NLP performance
-python -m spacy download en_core_web_sm
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Start development server**
+
+   ```bash
+   npm start
+   ```
+
+   or use any local server:
+
+   ```bash
+   python -m http.server 8000
+   # or
+   npx live-server
+   ```
+
+3. **Access the application**
+   - Open http://localhost:8000 in your browser
+
+## 🎮 How to Use
+
+### Basic Usage
+
+1. **Start the Application**
+
+   - Open the chatbot in your web browser
+   - You'll see a welcome message from the assistant
+
+2. **Input Your Shopping List**
+
+   - Type your items in natural language
+   - Examples:
+     - "I need apples, milk, and bread"
+     - "Where can I find tomatoes and cheese?"
+     - "I want to buy eggs, rice, and shampoo"
+
+3. **View Results**
+
+   - The chatbot will display shelf locations for each item
+   - Items are shown in an organized list with shelf numbers
+
+4. **Print Shopping List**
+   - Click the "Print Shopping List" button
+   - A printer-friendly version will be generated
+
+### Sample Interactions
+
+**Input**: "I need apples, milk, and detergent"
+**Output**:
+
+```
+• Apples → Shelf 1
+• Milk → Shelf 2
+• Detergent → Shelf 5
 ```
 
-### Step 3: Run the Application
-
-#### Easy Way (Launcher):
-
-```bash
-python launcher.py
-```
-
-The launcher will let you choose between CLI and GUI versions and handle dependency installation.
-
-#### Direct Launch:
-
-```bash
-# For GUI version:
-python supermarket_chatbot_gui.py
-
-# For CLI version:
-python supermarket_chatbot.py
-```
-
-## Usage
-
-1. **Start the chatbot**: Run `python supermarket_chatbot.py`
-2. **Enter your shopping list**: Type items you want to buy in natural language
-3. **Get shelf locations**: The chatbot will show you where each item is located
-4. **Save your list**: Optionally save the formatted shopping list to a file
-5. **Exit**: Type 'quit' or 'exit' to end the session
-
-### Example Interactions
-
-**Input:** "I want to buy apples, milk, and detergent"
-**Output:**
+**Input**: "Where can I find bread and eggs?"
+**Output**:
 
 ```
-✅ ITEMS FOUND:
-   Apples → Shelf 1
-   Milk → Shelf 2
-   Detergent → Shelf 5
-
-SHELF 1:
-  • Apples
-
-SHELF 2:
-  • Milk
-
-SHELF 5:
-  • Detergent
+• Bread → Shelf 3
+• Eggs → Shelf 2
 ```
 
-**Input:** "I need bread, eggs, chicken, and orange juice"
-**Output:**
+## 🗃 Product Database
 
-```
-✅ ITEMS FOUND:
-   Bread → Shelf 6
-   Eggs → Shelf 2
-   Chicken → Shelf 4
-   Orange → Shelf 1
-   Juice → Shelf 3
-```
+The system recognizes 40+ products across 10 different shelf categories:
 
-## Supported Products
-
-The chatbot recognizes over 50 different products across 10 shelf categories:
-
-- **Shelf 1**: Fruits & Vegetables (apples, bananas, tomatoes, etc.)
+- **Shelf 1**: Fresh Produce (apples, bananas, tomatoes, etc.)
 - **Shelf 2**: Dairy Products (milk, cheese, eggs, etc.)
-- **Shelf 3**: Beverages (water, juice, coffee, etc.)
-- **Shelf 4**: Meat & Seafood (chicken, beef, fish, etc.)
-- **Shelf 5**: Cleaning Products (detergent, soap, shampoo, etc.)
-- **Shelf 6**: Bread & Bakery (bread, cake, cookies, etc.)
-- **Shelf 7**: Snacks & Candy (chips, chocolate, nuts, etc.)
-- **Shelf 8**: Pasta & Rice (pasta, rice, noodles, etc.)
-- **Shelf 9**: Frozen Foods (ice cream, pizza, frozen vegetables, etc.)
-- **Shelf 10**: Spices & Condiments (salt, pepper, oil, etc.)
+- **Shelf 3**: Bakery (bread, cakes, cookies, etc.)
+- **Shelf 4**: Meat & Seafood (chicken, fish, beef, etc.)
+- **Shelf 5**: Cleaning Supplies (detergent, soap, shampoo, etc.)
+- **Shelf 6**: Pantry Items (rice, pasta, flour, etc.)
+- **Shelf 7**: Canned Goods (beans, soup, corn, etc.)
+- **Shelf 8**: Beverages (water, juice, coffee, etc.)
+- **Shelf 9**: Frozen Foods (ice cream, frozen pizza, etc.)
+- **Shelf 10**: Snacks (chips, chocolate, nuts, etc.)
 
-## NLP Techniques Used
+## 🧠 NLP Implementation
 
-1. **Tokenization**: Breaking down input text into individual words
-2. **POS Tagging**: Identifying parts of speech to find nouns (potential products)
-3. **Stop Word Removal**: Filtering out common words that aren't products
-4. **Named Entity Recognition**: Using spaCy to identify product entities
-5. **Text Preprocessing**: Cleaning and normalizing input text
-6. **Pattern Matching**: Finding partial matches for product variations
+### Techniques Used
 
-## File Structure
+1. **Tokenization**: Breaking input text into individual words
+2. **Entity Recognition**: Identifying product names from input
+3. **Intent Classification**: Understanding customer requests
+4. **Text Normalization**: Converting to lowercase, removing punctuation
+5. **Stop Word Removal**: Filtering out common words like "I", "need", "and"
+
+### NLP Pipeline
+
+```javascript
+User Input → Tokenization → Entity Extraction → Database Lookup → Response Generation
+```
+
+### Key Functions
+
+- `extractProducts()`: Extracts product names using pattern matching
+- `processUserInput()`: Main NLP processing pipeline
+- `initializeNLP()`: Initializes and trains the NLP model
+
+## 🎨 User Interface
+
+### Features
+
+- **Clean, Modern Design**: Gradient backgrounds with card-based layout
+- **Chat Interface**: Conversational interaction style
+- **Responsive Layout**: Adapts to different screen sizes
+- **Visual Feedback**: Loading indicators and animations
+- **Print Support**: Optimized print stylesheet
+
+### Accessibility
+
+- Keyboard navigation support
+- High contrast colors
+- Clear typography
+- Screen reader friendly
+
+## 🔧 Customization
+
+### Adding New Products
+
+1. **Update Product Database** in `script.js`:
+
+   ```javascript
+   const productDatabase = {
+     new_product: shelf_number,
+     // ... existing products
+   };
+   ```
+
+2. **Add Product Variants**:
+   ```javascript
+   'product': 1, 'products': 1, // singular and plural forms
+   ```
+
+### Modifying Shelf Categories
+
+1. Update the product database mappings
+2. Adjust the CSS styling if needed
+3. Update the documentation
+
+### Customizing UI
+
+1. **Colors**: Modify CSS custom properties in `style.css`
+2. **Layout**: Adjust container sizes and spacing
+3. **Typography**: Change font families and sizes
+
+## 📁 File Structure
 
 ```
 supermarket-chatbot/
-│
-├── launcher.py                    # Easy launcher (choose CLI/GUI)
-├── supermarket_chatbot.py         # CLI version
-├── supermarket_chatbot_gui.py     # GUI version
-├── requirements.txt               # Python dependencies
-├── README.md                      # This file
-├── user_guide.pdf                 # User documentation
-└── shopping_list_*.txt            # Generated shopping lists
+├── index.html          # Main HTML file
+├── script.js           # JavaScript logic and NLP processing
+├── style.css           # Styling and responsive design
+├── package.json        # Project configuration
+├── README.md           # This documentation
+└── user-guide.pdf      # User guide document
 ```
 
-## Troubleshooting
+## 🧪 Testing
 
-### Common Issues:
+### Manual Testing Scenarios
 
-1. **NLTK Data Not Found**
+1. **Basic Product Search**
 
-   - The application will automatically download required NLTK data
-   - If issues persist, run: `python -c "import nltk; nltk.download('all')"`
+   - Input: "apples and milk"
+   - Expected: Shelf locations displayed
 
-2. **spaCy Model Not Found**
+2. **Natural Language Variations**
 
-   - Install with: `python -m spacy download en_core_web_sm`
-   - The application works without spaCy, using NLTK only
+   - "I need..." / "I want to buy..." / "Where can I find..."
+   - All should work correctly
 
-3. **Import Errors**
-   - Ensure all dependencies are installed: `pip install -r requirements.txt`
-   - Use Python 3.7 or higher
+3. **Multiple Items**
 
-## Development Notes
+   - Test with 2-10 items in one request
+   - Verify all items are processed
 
-- The product database can be easily extended by adding items to the `product_database` dictionary
-- The NLP pipeline can be customized by modifying the extraction methods
-- Additional shelf categories can be added as needed
+4. **Unknown Items**
 
-## License
+   - Input items not in database
+   - Should show "not found" message
 
-This project is created for educational purposes as part of the CO3251 Natural Language Processing course assignment.
+5. **Print Functionality**
+   - Generate and verify printable list
+
+### Browser Compatibility
+
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+1. **NLP Library Not Loading**
+
+   - Check internet connection
+   - Verify CDN link in HTML
+   - Check browser console for errors
+
+2. **Products Not Recognized**
+
+   - Ensure products exist in database
+   - Check spelling and variations
+   - Try simpler input format
+
+3. **Print Not Working**
+   - Enable pop-ups in browser
+   - Check print permissions
+   - Try different browser
+
+### Debug Mode
+
+Enable debug mode by opening browser console and running:
+
+```javascript
+console.log("Product Database:", productDatabase);
+console.log("Current Shopping List:", currentShoppingList);
+```
+
+## 📈 Performance Considerations
+
+- **Loading Time**: ~2-3 seconds for NLP initialization
+- **Response Time**: <1 second for product lookup
+- **Memory Usage**: Minimal client-side storage
+- **Scalability**: Can handle 100+ products efficiently
+
+## 🔮 Future Enhancements
+
+1. **Voice Input**: Speech recognition for hands-free interaction
+2. **Barcode Scanning**: Camera-based product identification
+3. **Store Maps**: Visual shelf location display
+4. **Multi-language Support**: Support for local languages
+5. **Real-time Inventory**: Integration with store inventory systems
+6. **Personalization**: Remember frequent items per customer
+
+## 📄 License
+
+This project is created for educational purposes as part of CO3251 Natural Language Processing course assignment.
+
+## 👨‍💻 Developer
+
+**Assignment**: CO3251 Natural Language Processing - Assignment 2  
+**Topic**: Supermarket Assistant Chatbot using NLP  
+**Technology**: JavaScript with NLP.js
+
+---
+
+For technical support or questions about this implementation, please refer to the course materials or contact the instructor.

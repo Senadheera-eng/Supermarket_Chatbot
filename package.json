@@ -1,0 +1,19 @@
+{
+  "name": "supermarket-chatbot",
+  "version": "1.0.0",
+  "description": "NLP-powered supermarket assistant chatbot",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "node-nlp": "^4.27.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "keywords": ["nlp", "chatbot", "supermarket", "javascript"],
+  "author": "Your Name",
+  "license": "MIT"
+}
