@@ -97,9 +97,9 @@ This chatbot application is designed to be placed at supermarket entrances to as
    - The chatbot will display shelf locations for each item
    - Items are shown in an organized list with shelf numbers
 
-4. **Print Shopping List**
-   - Click the "Print Shopping List" button
-   - A printer-friendly version will be generated
+4. **Save Shopping List**
+   - Click the "Save Transaction" button
+   - A detailed text file will be downloaded automatically
 
 ### Sample Interactions
 
@@ -173,36 +173,6 @@ User Input → Tokenization → Entity Extraction → Database Lookup → Respon
 - High contrast colors
 - Clear typography
 - Screen reader friendly
-
-## 🔧 Customization
-
-### Adding New Products
-
-1. **Update Product Database** in `script.js`:
-
-   ```javascript
-   const productDatabase = {
-     new_product: shelf_number,
-     // ... existing products
-   };
-   ```
-
-2. **Add Product Variants**:
-   ```javascript
-   'product': 1, 'products': 1, // singular and plural forms
-   ```
-
-### Modifying Shelf Categories
-
-1. Update the product database mappings
-2. Adjust the CSS styling if needed
-3. Update the documentation
-
-### Customizing UI
-
-1. **Colors**: Modify CSS custom properties in `style.css`
-2. **Layout**: Adjust container sizes and spacing
-3. **Typography**: Change font families and sizes
 
 ## 📁 File Structure
 
@@ -287,25 +257,13 @@ console.log("Current Shopping List:", currentShoppingList);
 - **Memory Usage**: Minimal client-side storage
 - **Scalability**: Can handle 100+ products efficiently
 
-## 🔮 Future Enhancements
-
-1. **Voice Input**: Speech recognition for hands-free interaction
-2. **Barcode Scanning**: Camera-based product identification
-3. **Store Maps**: Visual shelf location display
-4. **Multi-language Support**: Support for local languages
-5. **Real-time Inventory**: Integration with store inventory systems
-6. **Personalization**: Remember frequent items per customer
-
 ## 📄 License
 
 This project is created for educational purposes as part of CO3251 Natural Language Processing course assignment.
 
 ## 👨‍💻 Developer
 
+**Developer**-K.M.L.N.Senadheera (22/ENG/079)
 **Assignment**: CO3251 Natural Language Processing - Assignment 2  
 **Topic**: Supermarket Assistant Chatbot using NLP  
 **Technology**: JavaScript with NLP.js
-
----
-
-For technical support or questions about this implementation, please refer to the course materials or contact the instructor.
