@@ -263,7 +263,6 @@ This project is created for educational purposes as part of CO3251 Natural Langu
 
 ## 👨‍💻 Developer
 
-**Developer**-K.M.L.N.Senadheera (22/ENG/079)
-**Assignment**: CO3251 Natural Language Processing - Assignment 2  
+**Developer**-K.M.L.N.Senadheera (22/ENG/079) 
 **Topic**: Supermarket Assistant Chatbot using NLP  
 **Technology**: JavaScript with NLP.js
