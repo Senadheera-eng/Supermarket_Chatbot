@@ -13,13 +13,7 @@
         <header class="header">
             <div class="header-icon">🛒</div>
             <h1>Supermarket Assistant</h1>
-            <p>Enhanced with NLP Intent Classification</p>
-            <p>Tell me what items you need and I'll help you find their shelf locations using advanced natural language processing.</p>
-            <div class="feature-badges">
-                <span class="badge">🧠 NLP Powered</span>
-                <span class="badge">🎯 Intent Recognition</span>
-                <span class="badge">✨ Smart Responses</span>
-            </div>
+            <p>Tell me what items you need and I'll help you find their shelf locations.</p>
         </header>
 
         <!-- Chat Interface -->
@@ -38,14 +32,8 @@
                                 <div class="example-query" onclick="fillExample('I need apples, milk, and bread')">
                                     🛒 "I need apples, milk, and bread"
                                 </div>
-                                <div class="example-query" onclick="fillExample('Can you help me find tomatoes and cheese?')">
-                                    🔍 "Can you help me find tomatoes and cheese?"
-                                </div>
-                                <div class="example-query" onclick="fillExample('Good morning! Where can I get eggs and rice?')">
-                                    🌅 "Good morning! Where can I get eggs and rice?"
-                                </div>
-                                <div class="example-query" onclick="fillExample('Thanks for your help!')">
-                                    🙏 "Thanks for your help!"
+                                <div class="example-query" onclick="fillExample('Can you help me')">
+                                    🔍 "Can you help me"
                                 </div>
                             </div>
                         </div>
@@ -60,11 +48,7 @@
                 <button onclick="sendMessage()" class="send-btn">Send</button>
             </div>
             
-            <div class="quick-actions">
-                <button class="quick-btn" onclick="fillExample('hello')">👋 Say Hello</button>
-                <button class="quick-btn" onclick="fillExample('help')">❓ Get Help</button>
-                <button class="quick-btn" onclick="clearChat()">🗑️ Clear Chat</button>
-            </div>
+
         </div>
 
         <!-- Results Display -->
@@ -99,7 +83,6 @@
         <!-- Footer -->
         <footer class="footer">
             <p>NLP-Enhanced Supermarket Assistant | CO3251 Assignment</p>
-            <p>Now featuring intelligent intent classification and natural conversation</p>
         </footer>
     </div>
 
