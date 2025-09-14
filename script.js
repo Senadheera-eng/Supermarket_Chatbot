@@ -229,7 +229,8 @@ function extractProducts(text) {
     const lowercaseText = text.toLowerCase();
     
     const commonWords = ['i', 'need', 'want', 'to', 'buy', 'and', 'the', 'some', 'a', 'an', 
-                        'can', 'you', 'help', 'me', 'find', 'where', 'is', 'are', 'do', 'have'];
+                        'can', 'you', 'help', 'me', 'find', 'where', 'is', 'are', 'do', 'have','hi', 'hello', 'hey', 'good', 'morning', 'afternoon', 'evening', 
+                    'greetings', 'howdy', 'whats', 'sup'];
     
     const words = lowercaseText.split(/[,\s]+/).filter(word => 
         word.length > 0 && !commonWords.includes(word)
