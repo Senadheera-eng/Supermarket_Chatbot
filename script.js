@@ -1,6 +1,8 @@
 /**
- * Supermarket Assistant Chatbot - Complete Fixed Version
+ * 22/ENG/079 - K.M.L.N.Senadheera
+ * Supermarket Assistant Chatbot 
  * Natural Language Processing Assignment - CO3251
+ * Manual Greeting Detection + Enhanced UI
  */
 
 // Product-Location Database
@@ -28,7 +30,7 @@ const productDatabase = {
     
     // Pantry Items - Shelf 6
     'rice': 6, 'pasta': 6, 'flour': 6, 'sugar': 6, 'salt': 6, 'pepper': 6,
-    'oil': 6, 'olive oil': 6, 'vinegar': 6, 'honey': 6,
+    'oil': 6, 'olive oil': 6, 'honey': 6,
     
     // Canned Goods - Shelf 7
     'beans': 7, 'soup': 7, 'tomato sauce': 7, 'corn': 7, 'tuna can': 7,
@@ -44,48 +46,52 @@ const productDatabase = {
     
     // Snacks - Shelf 10
     'chips': 10, 'chocolate': 10, 'candy': 10, 'nuts': 10, 'crackers': 10,
-    'popcorn': 10, 'pretzels': 10, 'granola bars': 10
+    'popcorn': 10
 };
 
 let currentShoppingList = [];
 
-// GREETING DETECTION SYSTEM
+// MANUAL GREETING DETECTION SYSTEM (RESTORED)
 const GREETING_RESPONSES = {
-    'hello': 'Hello there! 👋 Welcome to our smart supermarket assistant! How can I help you find items today?',
-    'hi': 'Hi! 😊 Great to see you! What items are you looking for in our store?',
-    'hey': 'Hey! 🙌 Welcome! Tell me what products you need and I\'ll help you find them!',
-    'greetings': 'Greetings! 🤖 I\'m your friendly supermarket assistant. What can I help you locate today?',
-    'good morning': 'Good morning! ☀️ Ready to help you with your shopping. What items do you need?',
-    'good afternoon': 'Good afternoon! 🌞 How can I assist with your shopping list today?',
-    'good evening': 'Good evening! 🌙 Let me help you find everything you need!',
-    'howdy': 'Howdy! 🤠 What brings you to our store today? What items can I help you find?',
-    'what\'s up': 'Not much! 😄 Just here to help you find products! What are you shopping for?',
-    'whats up': 'Not much! 😄 Just here to help you find products! What are you shopping for?'
+    'hello': 'Hello there! Welcome to our smart supermarket assistant! How can I help you find items today?',
+    'hi': 'Hi! Great to see you! What items are you looking for in our store?',
+    'hey': 'Hey! Welcome! Tell me what products you need and I\'ll help you find them!',
+    'greetings': 'Greetings! I\'m your friendly supermarket assistant. What can I help you locate today?',
+    'good morning': 'Good morning! Ready to help you with your shopping. What items do you need?',
+    'good afternoon': 'Good afternoon! How can I assist with your shopping list today?',
+    'good evening': 'Good evening! Let me help you find everything you need!',
+    'howdy': 'Howdy! What brings you to our store today? What items can I help you find?',
+    'what\'s up': 'Not much! Just here to help you find products! What are you shopping for?',
+    'whats up': 'Not much! Just here to help you find products! What are you shopping for?',
+    'hello there': 'Hello there! Welcome to our smart supermarket assistant! How can I help you find items today?',
+    'hi there': 'Hi there! Great to see you! What items are you looking for in our store?',
+    'hey there': 'Hey there! Welcome! Tell me what products you need and I\'ll help you find them!'
 };
 
 const THANKS_RESPONSES = {
-    'thank you': 'You\'re very welcome! 😊 Happy to help with anything else you need!',
-    'thanks': 'You\'re welcome! 💙 Let me know if you need help finding more items!',
-    'thx': 'No problem! 👍 Anything else I can help you locate?',
-    'thank u': 'You\'re so welcome! 🤗 What else can I help you find?',
-    'ty': 'You\'re welcome! 😄 Need help with anything else?',
-    'cheers': 'Cheers to you too! 🥂 Happy shopping!'
+    'thank you': 'You\'re very welcome! Happy to help with anything else you need!',
+    'thanks': 'You\'re welcome! Let me know if you need help finding more items!',
+    'thx': 'No problem! Anything else I can help you locate?',
+    'thank u': 'You\'re so welcome! What else can I help you find?',
+    'ty': 'You\'re welcome! Need help with anything else?',
+    'cheers': 'Cheers to you too! Happy shopping!'
 };
 
 const HELP_RESPONSES = {
-    'help': 'I\'d love to help! 🤝 Just tell me what items you\'re looking for. For example: "I need apples and milk" or "Where can I find bread?" I know over 40 products!',
-    'help me': 'Of course! 💪 I can help you find products in our supermarket. Just tell me what you\'re shopping for!',
-    'i need help': 'I\'m here to help! 🆘 Tell me what items you want to find and I\'ll show you exactly which shelf they\'re on!',
-    'can you help': 'Absolutely! ✅ I can help you locate any products in our store. What are you looking for?',
-    'assistance': 'Happy to provide assistance! 🤖 What items do you need help finding today?'
+    'help': 'I\'d love to help! Just tell me what items you\'re looking for. For example: "I need apples and milk" or "Where can I find bread?" I know over 40 products!',
+    'help me': 'Of course! I can help you find products in our supermarket. Just tell me what you\'re shopping for!',
+    'i need help': 'I\'m here to help! Tell me what items you want to find and I\'ll show you exactly which shelf they\'re on!',
+    'can you help': 'Absolutely! I can help you locate any products in our store. What are you looking for?',
+    'assistance': 'Happy to provide assistance! What items do you need help finding today?'
 };
 
 /**
- * Check for conversational intents (greetings, thanks, help)
+ * Check for conversational intents - ENHANCED INTELLIGENT DETECTION
  */
 function checkForGreeting(input) {
     const cleanInput = input.toLowerCase().trim();
     
+    // First try exact matches
     if (GREETING_RESPONSES[cleanInput]) {
         return {
             type: 'greeting',
@@ -105,6 +111,59 @@ function checkForGreeting(input) {
             type: 'help',
             response: HELP_RESPONSES[cleanInput]
         };
+    }
+    
+    // Enhanced pattern matching for partial phrases
+    
+    // Greeting patterns
+    const greetingPatterns = [
+        /^(hello|hi|hey)(\s+there)?(\s+.*)?$/i,
+        /^(good\s+(morning|afternoon|evening))(\s+.*)?$/i,
+        /^(greetings?|howdy)(\s+.*)?$/i,
+        /^(what'?s?\s+up|sup)(\s+.*)?$/i
+    ];
+    
+    for (let pattern of greetingPatterns) {
+        if (pattern.test(cleanInput)) {
+            return {
+                type: 'greeting',
+                response: GREETING_RESPONSES['hello'] // Default greeting response
+            };
+        }
+    }
+    
+    // Thanks patterns - more flexible matching
+    const thanksPatterns = [
+        /^(thank\s*you?|thanks?)(\s+.*)?$/i,
+        /^(thx|ty)(\s+.*)?$/i,
+        /^(cheers?)(\s+.*)?$/i,
+        /^.*\b(thank\s*you?|thanks?)\b.*$/i // Contains thanks anywhere
+    ];
+    
+    for (let pattern of thanksPatterns) {
+        if (pattern.test(cleanInput)) {
+            return {
+                type: 'thanks',
+                response: THANKS_RESPONSES['thank you'] // Default thanks response
+            };
+        }
+    }
+    
+    // Help patterns
+    const helpPatterns = [
+        /^(help|assistance)(\s+.*)?$/i,
+        /^(can\s+you\s+help|help\s+me)(\s+.*)?$/i,
+        /^(i\s+need\s+help)(\s+.*)?$/i,
+        /^(how\s+does?\s+this\s+work)(\s+.*)?$/i
+    ];
+    
+    for (let pattern of helpPatterns) {
+        if (pattern.test(cleanInput)) {
+            return {
+                type: 'help',
+                response: HELP_RESPONSES['help'] // Default help response
+            };
+        }
     }
     
     return null;
@@ -216,7 +275,7 @@ function extractProducts(text) {
 }
 
 /**
- * Main processing function
+ * Main processing function - RESTORED TO MANUAL DETECTION
  */
 async function processUserInput(userInput) {
     showLoading(true);
@@ -224,11 +283,11 @@ async function processUserInput(userInput) {
     try {
         console.log('Processing input:', userInput);
         
-        // Check for conversational intents first
+        // Check for conversational intents first (MANUAL DETECTION)
         const greetingCheck = checkForGreeting(userInput);
         
         if (greetingCheck) {
-            console.log('Greeting detected:', greetingCheck.type);
+            console.log('Manual greeting detected:', greetingCheck.type);
             addMessageToChat(userInput, 'user');
             addMessageToChat(greetingCheck.response, 'bot');
             showLoading(false);
@@ -537,7 +596,7 @@ function capitalizeFirst(str) {
 }
 
 /**
- * Test function for debugging
+ * Test functions for debugging
  */
 window.testGreeting = function(input) {
     const result = checkForGreeting(input);
@@ -555,14 +614,14 @@ window.testFuzzy = function(input) {
  * Initialize the application
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Bulletproof Chatbot Initialized');
+    console.log('Supermarket Chatbot with Enhanced UI Initialized');
     
     const userInput = document.getElementById('userInput');
     if (userInput) {
         userInput.focus();
     }
     
-    addMessageToChat('System ready! Try saying "hello" or type your shopping list 🛒.', 'bot');
+    addMessageToChat('System ready with enhanced interface! Try saying "hello" or type your shopping list.', 'bot');
     
     console.log('Test functions available: testGreeting("hello"), testFuzzy("aples")');
 });

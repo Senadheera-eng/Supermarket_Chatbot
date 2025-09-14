@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supermarket Assistant Chatbot</title>
+    <title>Supermarket Assistant Chatbot with NLP</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/node-nlp@4.27.0/dist/nlp.min.js"></script>
 </head>
@@ -11,30 +11,59 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>🛒 Supermarket Assistant</h1>
-            <p>Welcome! Tell me what items you need and I'll help you find their shelf locations.</p>
+            <div class="header-icon">🛒</div>
+            <h1>Supermarket Assistant</h1>
+            <p>Enhanced with NLP Intent Classification</p>
+            <p>Tell me what items you need and I'll help you find their shelf locations using advanced natural language processing.</p>
+            <div class="feature-badges">
+                <span class="badge">🧠 NLP Powered</span>
+                <span class="badge">🎯 Intent Recognition</span>
+                <span class="badge">✨ Smart Responses</span>
+            </div>
         </header>
 
         <!-- Chat Interface -->
         <div class="chat-container">
             <div id="chatMessages" class="chat-messages">
                 <div class="message bot-message">
+                    <div class="message-avatar">🤖</div>
                     <div class="message-content">
-                        <strong>Assistant:</strong> Hello! I'm your supermarket assistant. You can ask me things like:
-                        <ul>
-                            <li>"I need apples, milk, and bread"</li>
-                            <li>"Where can I find tomatoes and cheese?"</li>
-                            <li>"I want to buy eggs, rice, and shampoo"</li>
-                        </ul>
-                        What items are you looking for today?
+                        <strong>Smart Assistant:</strong> Hello! I'm your enhanced supermarket assistant with NLP capabilities. You can interact with me naturally by:
+                        <div class="example-queries">
+                            <p>Try these natural interactions:</p>
+                            <div class="query-examples">
+                                <div class="example-query" onclick="fillExample('Hello there!')">
+                                    👋 "Hello there!"
+                                </div>
+                                <div class="example-query" onclick="fillExample('I need apples, milk, and bread')">
+                                    🛒 "I need apples, milk, and bread"
+                                </div>
+                                <div class="example-query" onclick="fillExample('Can you help me find tomatoes and cheese?')">
+                                    🔍 "Can you help me find tomatoes and cheese?"
+                                </div>
+                                <div class="example-query" onclick="fillExample('Good morning! Where can I get eggs and rice?')">
+                                    🌅 "Good morning! Where can I get eggs and rice?"
+                                </div>
+                                <div class="example-query" onclick="fillExample('Thanks for your help!')">
+                                    🙏 "Thanks for your help!"
+                                </div>
+                            </div>
+                        </div>
+                        What would you like to find today?
                     </div>
                 </div>
             </div>
             
             <div class="input-container">
-                <input type="text" id="userInput" placeholder="Type your shopping list here (e.g., I need apples, milk, and bread)..." 
+                <input type="text" id="userInput" placeholder="Type naturally - greetings, questions, or shopping lists (e.g., 'Hi! I need apples and milk')..." 
                        onkeypress="handleKeyPress(event)">
                 <button onclick="sendMessage()" class="send-btn">Send</button>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="fillExample('hello')">👋 Say Hello</button>
+                <button class="quick-btn" onclick="fillExample('help')">❓ Get Help</button>
+                <button class="quick-btn" onclick="clearChat()">🗑️ Clear Chat</button>
             </div>
         </div>
 
@@ -64,12 +93,13 @@
         <!-- Loading Indicator -->
         <div id="loadingIndicator" class="loading" style="display: none;">
             <div class="spinner"></div>
-            <p>Processing your request...</p>
+            <p>Processing your request with NLP...</p>
         </div>
 
         <!-- Footer -->
         <footer class="footer">
-            <p>NLP-powered Supermarket Assistant | CO3251 Assignment</p>
+            <p>NLP-Enhanced Supermarket Assistant | CO3251 Assignment</p>
+            <p>Now featuring intelligent intent classification and natural conversation</p>
         </footer>
     </div>
 
@@ -77,7 +107,7 @@
     <div id="printVersion" class="print-only">
         <h2>🛒 Supermarket Shopping List</h2>
         <div id="printContent"></div>
-        <p class="print-footer">Generated by Supermarket Assistant Chatbot</p>
+        <p class="print-footer">Generated by NLP-Enhanced Supermarket Assistant Chatbot</p>
     </div>
 
     <script src="script.js"></script>
