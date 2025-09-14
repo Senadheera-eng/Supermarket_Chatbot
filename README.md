@@ -236,11 +236,6 @@ supermarket-chatbot/
    - Check spelling and variations
    - Try simpler input format
 
-3. **Print Not Working**
-   - Enable pop-ups in browser
-   - Check print permissions
-   - Try different browser
-
 ### Debug Mode
 
 Enable debug mode by opening browser console and running:
